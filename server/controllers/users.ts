@@ -1,4 +1,6 @@
-import { Response, Request } from 'express'
+import { Response, Request } from 'express';
+import sha256 from 'sha256';
+import jsonwebtoken from 'jsonwebtoken';
 
 import Users from '../models/users';
 
@@ -15,7 +17,13 @@ export const getUsers = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
     try {
-        const response = await Users.create(req.body);
+
+        const newUser = {
+            ...req.body,
+            password: sha256(req.body.password)
+        }
+        
+        const response = await Users.create(newUser);
 
         res.send(response);
 
@@ -24,12 +32,12 @@ export const createUser = async (req: Request, res: Response) => {
     }
 }
 
-export const getUserById = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response) => {
     try {
-        const foundedUser = await Users.findById(req.query.id);
-        res.send(foundedUser);
+        const userExist = await Users.find({ email: req.body.email, password: sha256(req.body.password) });
+        
 
-    } catch(error) {
-        res.status(400).send(error)
+    } catch(error: any) {
+        res.status(400).send(error);
     }
 }

@@ -4,7 +4,7 @@ import Meetings from '../models/meetings';
 
 export const getMeetings = async (req: Request, res: Response) => {
     try {
-        const allMeetings = await Meetings.find({ familyId: req.query.familyId }); 
+        const allMeetings = await Meetings.find(req.query); 
 
         res.send(allMeetings);
     } catch(error) {

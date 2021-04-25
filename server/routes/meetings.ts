@@ -4,7 +4,7 @@ import { getMeetings, createMeeting, editMeeting } from '../controllers/meetings
 
 const meetingRouter = Router();
 
-meetingRouter.get('/:familyId', getMeetings);
+meetingRouter.get('/', getMeetings);
 meetingRouter.post('/', createMeeting);
 meetingRouter.put('/', editMeeting);
 

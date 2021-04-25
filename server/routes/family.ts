@@ -1,12 +1,13 @@
 import { Router } from 'express';
 
-import { getFamily, createFamily, editFamily } from '../controllers/family';
+import { getFamilies, getFamily, createFamily, editFamily } from '../controllers/family';
 
 const familyRouter = Router();
 
-familyRouter.get('/:familyId', getFamily);
+familyRouter.get('/all', getFamilies);
+familyRouter.get('/', getFamily);
 familyRouter.post('/', createFamily);
-familyRouter.put('/', editFamily);
+familyRouter.put('/:familyId', editFamily);
 
 export default familyRouter;
 

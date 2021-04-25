@@ -2,11 +2,23 @@ import { Request, Response } from 'express';
 
 import Family from '../models/family';
 
+
+export const getFamilies = async (req: Request, res: Response) => {
+    try {
+        const allFamily = await Family.find();
+
+        res.send(allFamily);
+    } catch(error) {
+        res.status(400).send(error);
+    }
+}
+
+
 export const getFamily = async (req: Request, res: Response) => {
     try {
-        const memberFamily = await Family.find({ members: req.query.userId });
+        const family = await Family.find(req.query);
 
-        res.send(memberFamily);
+        res.send(family);
     } catch(error) {
         res.status(400).send(error);
     }
@@ -14,7 +26,7 @@ export const getFamily = async (req: Request, res: Response) => {
 
 export const editFamily = async (req: Request, res: Response) => {
     try {
-        const updatedFamily = await Family.updateOne({ id: req.query.id }, req.body);
+        const updatedFamily = await Family.updateOne({ _id: req.params.familyId }, req.body);
 
         res.send(updatedFamily);
     } catch(error) {
@@ -24,11 +36,12 @@ export const editFamily = async (req: Request, res: Response) => {
 
 export const createFamily = async (req: Request, res: Response) => {
     try {
-        const response = await Family.create(req.body);
+        const newFamily = { ...req.body, createdAt: new Date() };
+      
+        const response = await Family.create(newFamily);
 
         res.send(response);
     } catch(error) {
         res.status(400).send(error);
     }
 }
-
