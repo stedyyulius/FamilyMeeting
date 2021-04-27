@@ -8,7 +8,7 @@ export const getMeetings = async (req: Request, res: Response) => {
 
         res.send(allMeetings);
     } catch(error) {
-        res.status(400).send(error);
+        res.status(400).json({ error: error.toString() });
     }
 }
 
@@ -18,7 +18,7 @@ export const createMeeting = async (req: Request, res: Response) => {
 
         res.send(response);
     } catch(error) {
-        res.status(400).send(error);
+        res.status(400).json({ error: error.toString() });
     }
 }
 
@@ -28,6 +28,6 @@ export const editMeeting = async (req: Request, res: Response) => {
 
         res.send(response);
     } catch(error) {
-        res.status(400).send(error);
+        res.status(400).json({ error: error.toString() });
     }
 }

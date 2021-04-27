@@ -9,6 +9,7 @@ describe('family api', () => {
         mongoose.connection.db.dropDatabase(() => {
             mongoose.connection.close(() => {
                 done();
+                app.close();
             })
         });
     });

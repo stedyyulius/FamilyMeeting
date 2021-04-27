@@ -9,7 +9,7 @@ export const getFamilies = async (req: Request, res: Response) => {
 
         res.send(allFamily);
     } catch(error) {
-        res.status(400).send(error);
+        res.status(400).json({ error: error.toString() });
     }
 }
 
@@ -20,7 +20,7 @@ export const getFamily = async (req: Request, res: Response) => {
 
         res.send(family);
     } catch(error) {
-        res.status(400).send(error);
+        res.status(400).json({ error: error.toString() });
     }
 }
 
@@ -30,7 +30,7 @@ export const editFamily = async (req: Request, res: Response) => {
 
         res.send(updatedFamily);
     } catch(error) {
-        res.status(400).send(error);
+        res.status(400).json({ error: error.toString() });
     }
 }
 
@@ -42,6 +42,6 @@ export const createFamily = async (req: Request, res: Response) => {
 
         res.send(response);
     } catch(error) {
-        res.status(400).send(error);
+        res.status(400).json({ error: error.toString() });
     }
 }

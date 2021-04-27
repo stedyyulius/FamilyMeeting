@@ -1,10 +1,12 @@
 import express from 'express';
+import mongoose  from 'mongoose';
+
+import middleware from './middleware';
 
 import userRouter from './routes/users';
 import meetingRouter from './routes/meetings';
 import familyRouter from './routes/family';
 
-import mongoose  from 'mongoose';
 
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname+'/.env' });
@@ -13,7 +15,6 @@ const connectMongo = async () => {
 
 try {
 
-    
     if (process.env.NODE_ENV === 'test') {
         
         await mongoose.connect(`mongodb+srv://${process.env.DBTEST_USERNAME}:${process.env.DBTEST_PASSWORD}@cluster0.ytldw.mongodb.net/${process.env.DBTEST_DB_NAME}?retryWrites=true&w=majority`,
@@ -32,8 +33,6 @@ try {
         
     }
 
-    
-
     console.log('mongodb connected');
 
     } catch (error) {
@@ -47,6 +46,8 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(middleware)
 
 app.use('/users', userRouter);
 app.use('/meetings', meetingRouter);
