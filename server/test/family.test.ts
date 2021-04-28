@@ -20,20 +20,23 @@ describe('family api', () => {
 
 
     beforeAll(async (done) => {
-        const newUser = await Users.create({ name: 'Pureo', email: 'pureo@gmail.com', password: sha256('puwawa') });
-        const token = await supertest(app).post('/users/login').set('Content-Type', 'application/json').send(newUser);
-        console.log(token)
+        const userData = { name: 'Pureo', email: 'pureo@gmail.com', password: 'puwawa' } 
+
+        const newUser = await Users.create({ ...userData, password: sha256(userData.password) });
+
+        const token = await supertest(app).post('/users/login').send(userData);
+        
         loginedUser = newUser;
-        auth = token;
-        done();
+        auth = token.text;
         app.close();
+        done();
     })
 
     afterAll((done) => {
         mongoose.connection.db.dropDatabase(() => {
             mongoose.connection.close(() => {
-                done();
                 app.close();
+                done();
             })
         });
     });
@@ -88,9 +91,8 @@ describe('family api', () => {
 
     test('user able to join family', async (done) => {
 
-
         const savedFamily = await supertest(app)
-        .get(`/family?name=${loginedUser.name}`)
+        .get(`/family?name=ocip`)
         .set('authorization', auth)
         .expect(200);
 

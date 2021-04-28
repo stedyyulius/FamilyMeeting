@@ -5,6 +5,7 @@ import app from '../app';
 
 import Users from '../models/users';
 import Family from '../models/family';
+import sha256 from 'sha256';
 
 interface userType {
     _id: string,
@@ -20,20 +21,23 @@ describe('meeting api', () => {
 
 
     beforeAll(async (done) => {
-        const newUser = await Users.create({ name: 'Pureo', email: 'pureo@gmail.com', password: 'puwawa' });
-        const token = await supertest(app).post('/users/login').send(newUser).toString() as string;
+        const userData = { name: 'Pureo', email: 'pureo@gmail.com', password: 'puwawa' } 
+
+        const newUser = await Users.create({ ...userData, password: sha256(userData.password) });
+
+        const token = await supertest(app).post('/users/login').send(userData);
 
         loginedUser = newUser;
-        auth = token;
-        done();
+        auth = token.text;
         app.close();
+        done();
     })
 
     afterAll((done) => {
         mongoose.connection.db.dropDatabase(() => {
             mongoose.connection.close(() => {
-                done();
                 app.close();
+                done();
             })
         });
     });
@@ -60,7 +64,10 @@ describe('meeting api', () => {
         .send(newMeeting)
         .expect(200);
 
-        const createdMeeting = await supertest(app).get(`/meetings?name=${meetingName}&participants=${loginedUser._id}&familyId=${newFamily._id}`);
+        const createdMeeting = 
+        await supertest(app)
+        .get(`/meetings?name=${meetingName}&participants=${loginedUser._id}&familyId=${newFamily._id}`)
+        .set('authorization', auth);
 
         expect(createdMeeting.body.length).toBe(1);
 

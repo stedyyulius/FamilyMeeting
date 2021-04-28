@@ -8,29 +8,43 @@ describe('family api', () => {
     afterAll((done) => {
         mongoose.connection.db.dropDatabase(() => {
             mongoose.connection.close(() => {
-                done();
                 app.close();
+                done();
             })
         });
     });
 
+    const newUser = {
+        name: 'Pudra',
+        password: 'puwwa',
+        birthdate: new Date()
+    };
+
+    let auth = '';
+
     test('user able to register', async (done) => {
 
-        const newUser = {
-            name: 'Pudra',
-            birthdate: new Date()
-        };
-
-        const registeredUser = await supertest(app)
+        await supertest(app)
         .post('/users/register')
         .send(newUser)
         .expect(200);
 
-        const savedUser = await supertest(app)
-        .get(`/users?_id=${registeredUser.body._id}`)
+        app.close(); 
+        done();
+    });
+
+    test('user able to login', async (done) => {
+
+        const loginResponse = await supertest(app)
+        .post(`/users/login`)
+        .send(newUser)
         .expect(200);
 
-        expect(savedUser.body.length).toEqual(1);
+        const token = loginResponse.text;
+
+        auth = token;
+
+        expect(token.length > 20).toEqual(true);
 
         app.close(); 
         done();
@@ -40,6 +54,7 @@ describe('family api', () => {
 
         const allFamilies = await supertest(app)
         .get('/users')
+        .set('authorization', auth)
         .expect(200);
 
         expect(allFamilies.body.length).toBe(1);

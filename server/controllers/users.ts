@@ -4,9 +4,6 @@ import jwt from 'jsonwebtoken';
 
 import Users from '../models/users';
 
-import * as dotenv from "dotenv";
-dotenv.config({ path: __dirname + '../.env' });
-
 export const getUsers = async (req: Request, res: Response) => {
 
     try {
@@ -37,10 +34,10 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
     try {
-        console.log(req.body._doc)
-        const payload = Object.keys(req.body._doc).length ? req.body._doc : req.body;
 
-        const userExist = await Users.findOne({ email: payload.email, password: sha256(payload.password) });
+        const { email, password } = req.body;
+
+        const userExist = await Users.findOne({ email, password: sha256(password) });
 
         if (userExist) {
             const token = jwt.sign(userExist.toJSON(), process.env.PRIVATE_KEY || '');
